@@ -17,14 +17,8 @@ Contributors: Prince Analyst
 
 import requests, json, re, time
 from datetime import datetime as dt
-<<<<<<< HEAD
-import re
-from transformers import pipelines
-from keys import bearer_token
-=======
 from collections import deque
 from utils.helpers import (BadRequest, RulesException, StreamException, Url)
->>>>>>> b77ef5a21d4232d697672a93a60887d94469594f
 
 class FeshBuilder:
     def __init__(self, bearer_token):
@@ -364,31 +358,6 @@ class Stream(FeshBuilder):
         print(f"Rule(s) successfully set for keywords {[line for line in self.keywords][:5]}.")
         return True
 
-<<<<<<< HEAD
-    def clean_tweet(self, tweet):
-        tweet = re.sub(r"http\S+", "", tweet)
-        tweet = re.sub(r"https\S+", "", tweet)
-        tweet = re.sub('[^A-Za-z0-9]+', ' ', tweet)
-        return tweet
-
-    def sentiment_analyzer_score(self, tweet):
-        """
-        This will use the transformers sentiment analysis pipeline to analyze the tweet.
-        """
-        pipeline = pipelines.SentimentAnalysisPipeline()
-        analysis = pipeline([tweet])
-        return analysis[0]['score']
-
-    def sentiment_analyzer_label(self, tweet):
-        """
-        This will use the transformers sentiment analysis pipeline to analyze the tweet.
-        """
-        pipeline = pipelines.SentimentAnalysisPipeline()
-        analysis = pipeline([tweet])
-        return analysis[0]['label']
-
-=======
->>>>>>> b77ef5a21d4232d697672a93a60887d94469594f
     def get_stream(self):
         repetition_breaker = None #Twitter will return same tweet if rate limit is reached but app is restarted. If this is value is same as last tweet, treat is as limit reached and sleep 15
         
@@ -443,13 +412,13 @@ class Stream(FeshBuilder):
                     with open('_'.join(self.keywords) +self.time_obj_str + ".json", "a") as file:
                         data = json.dumps(payloader)
                         file.write(data + '\n')
-=======
+
                 #Reset exponential timer and attemps count in case they have been used at a stream drop
                 if self.attempts > 1:
                     self.attempts = 1
                 if self.expo_time > 2:
                     self.expo_time = 2
->>>>>>> b77ef5a21d4232d697672a93a60887d94469594f
+
                     
                 tweet_details = json.loads(response_line)
                 if self.full_details:
