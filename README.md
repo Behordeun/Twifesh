@@ -1,13 +1,27 @@
 # Twifesh
 After some frustrations with tweepy around the v2 of Twitter API, I decided to write TwiFesh to stream tweets and write them to a json file. <br>
 <br> This is initially just going to stream tweets and write them as json to disk. In subsequent modules, we will add other twitter utility and also add funcitonality to upload contents to AWS S3.
+<br><br>
+
+## Updates
+- More refactoring
+- Added support for Twitter user Profile retrieval with the twifesh.api.Profile class (July 9, 2022): Takes a Twitter username and returns their profile details.
+- Added Support for getting timeline of tweets by a user with twifesh.api.Profiler class (July 10, 2022): Takes a Twitter username and returns a list of tweets they posted. 
+- Bug fixes: 1. retrieval of tweets failing with missing quoted content. 2. break stream on status 429 
+- More Bug fixes on rate limiting
+- Added Supported for Twitter rate limiting at Stream. Sleep 16 minutes and continue.
+- Bug fix in Profiler. Indicate that profile cannot be found if so.
+- Added support for retrieval of a user's followers and following crowd with their public metrics.
+- Bug fixes + added support for exponetial back-off and recovery after a stream break is picked up
+- Bug fix
+- Raise systemexit on uncaught error in the stream
+- Bug fix for uncaught exception at dropping of stream with possible unclosed connection with a with context
+- Refactored to add custom error handling and enum to manage statis urls in helpers
 
 **Requirements** 
 <br>
-- To run this module, some built-in python modules are required
-- *requests*
-- *datetime from datetime as dt*
-<br><br>
+- This module runs with builtin modules up to version 0.0.2
+<br>
 
 - In your elevated dev account, make sure to setup a project in your account and then create an app under the project. It is a requirement from Twitter
 - You will then get your bearer token.
@@ -19,16 +33,34 @@ https://developer.twitter.com/en/docs/twitter-api/tweets/filtered-stream/introdu
 **Output**
 - The output is a json file with same name as the keywords, ending in the date and time of the run
 
-**Example1**
+**Example1: Stream and write file, no interraction**
 
-*twifesh = Twifesh(bearer_token, keywords=['a topic', 'another topic'])* <br>
-*twifesh.stream_now()*
+$ from twifesh.api import Stream <br>
+$ twifesh = Stream(bearer_token, keywords=['topic1', 'topic2'], write_file=True) <br>
+$ twifesh.stream_now() <br>
 
-**Example2**
+- output: *topic1_topic2_2022July4_00_00_00s.json*
+<br><br>
 
-*twifesh = Twifesh(bearer_token)* <br>
-*twifesh.stream_now()*
+**Example2: Stream and no file written, asks for the topic(s)**
 
-<br>
-- output: *a_topic_another_topic_2022July4_00_00_00s.json*
+$ from twifesh.api import Stream<br>
+$ twifesh = Stream(bearer_token) <br>
+$ twifesh.stream_now()
 
+<br><br>
+
+**Example3: Profile - return user(s) python list of user(s) with details and public metrics**
+
+$ from twifesh.api import Profile <br>
+$ twifesh = Profile(bearer_token, usernames=['user1,user2']) <br>
+$ twifesh.get_profile() <br>
+
+<br><br>
+
+**Example4: Profiler - return user's historical tweet activity or their followers/following list and their public metrics**
+
+$ from twifesh.api import Profiler <br>
+$ twifesh = Profiler(bearer_token, username='username') <br>
+$ twifesh.get_profile_tweets() <br>,
+$ twifesh.get_followers_following()
