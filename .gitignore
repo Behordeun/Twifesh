@@ -13,3 +13,4 @@ __pycache__
 *.pid
 *.env
 *__pycache__
+main_keys.py

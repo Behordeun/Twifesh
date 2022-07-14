@@ -18,6 +18,7 @@ import requests
 import json
 from datetime import datetime as dt
 import re
+from transformers import pipelines
 from keys import bearer_token
 
 class Twifesh():
@@ -126,6 +127,22 @@ class Twifesh():
         tweet = re.sub('[^A-Za-z0-9]+', ' ', tweet)
         return tweet
 
+    def sentiment_analyzer_score(self, tweet):
+        """
+        This will use the transformers sentiment analysis pipeline to analyze the tweet.
+        """
+        pipeline = pipelines.SentimentAnalysisPipeline()
+        analysis = pipeline([tweet])
+        return analysis[0]['score']
+
+    def sentiment_analyzer_label(self, tweet):
+        """
+        This will use the transformers sentiment analysis pipeline to analyze the tweet.
+        """
+        pipeline = pipelines.SentimentAnalysisPipeline()
+        analysis = pipeline([tweet])
+        return analysis[0]['label']
+
     def get_stream(self):
         response = requests.get(
             "https://api.twitter.com/2/tweets/search/stream", auth=self.bearer_oauth, stream=True,
@@ -171,6 +188,8 @@ class Twifesh():
                                     'tweet_author_verified': includes.get('public_metrics').get('verified'),
                                     'tweet_author_name': includes.get('public_metrics').get('name'),
                                     'tweet' : data.get('text'),
+                                    'sentiment_score' : self.sentiment_analyzer_score(data.get('text')), # this is the sentiment score
+                                    'sentiment_label' : self.sentiment_analyzer_label(data.get('text')), # this is the sentiment label
                                     'cleaned_tweet' : self.clean_tweet(data.get('text')),
                                     'source' : data.get('source'),
                                     'quoted_id' : ','.join([line['id'] for line in data.get('referenced_tweets') if line['type'] == 'quoted']),
