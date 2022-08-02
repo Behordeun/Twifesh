@@ -99,7 +99,7 @@ class FeshBuilder:
 class Profile(FeshBuilder):
     def __init__(self, bearer_token, usernames):
         """
-        username: string with profile names seperated by commas and no spaces. eg: "profile1,profile2"
+        username: string with profile names separated by commas and no spaces. eg: "profile1,profile2"
         """
         super().__init__(bearer_token)
         self.usernames = usernames
@@ -368,7 +368,6 @@ class Stream(FeshBuilder):
 
         for response_line in response.iter_lines():
             if response_line:
-<<<<<<< HEAD
                 json_response = json.loads(response_line)
                 tweet_id = json_response['data']['id']
                 
@@ -401,8 +400,8 @@ class Stream(FeshBuilder):
                                     'tweet_author_verified': includes.get('public_metrics').get('verified'),
                                     'tweet_author_name': includes.get('public_metrics').get('name'),
                                     'tweet' : data.get('text'),
-                                    'sentiment_score' : self.sentiment_analyzer_score(data.get('text')), # this is the sentiment score
-                                    'sentiment_label' : self.sentiment_analyzer_label(data.get('text')), # this is the sentiment label
+                                    #'sentiment_score' : self.sentiment_analyzer_score(data.get('text')), # this is the sentiment score
+                                    #'sentiment_label' : self.sentiment_analyzer_label(data.get('text')), # this is the sentiment label
                                     'cleaned_tweet' : self.clean_tweet(data.get('text')),
                                     'source' : data.get('source'),
                                     'quoted_id' : ','.join([line['id'] for line in data.get('referenced_tweets') if line['type'] == 'quoted']),
@@ -413,7 +412,10 @@ class Stream(FeshBuilder):
                         data = json.dumps(payloader)
                         file.write(data + '\n')
 
-                #Reset exponential timer and attemps count in case they have been used at a stream drop
+                except:
+                    pass
+
+                #Reset exponential timer and attempts count in case they have been used at a stream drop
                 if self.attempts > 1:
                     self.attempts = 1
                 if self.expo_time > 2:
@@ -435,7 +437,7 @@ class Stream(FeshBuilder):
                     if status:
                         print(tweet_details, '\n')
                         if repetition_breaker == tweet_details:
-                            print(f"Same exact tweet returned. We suspect a possinble limit issue.\nResetting connection to the stream after 60 seconds...")
+                            print(f"Same exact tweet returned. We suspect a possible limit issue.\nResetting connection to the stream after 60 seconds...")
                             response.close()
                             print(f"Sleep started @ {dt.now().time()}\n")
                             time.sleep(60*1)
@@ -443,7 +445,7 @@ class Stream(FeshBuilder):
                                 self.attempts = 1
                                 self.get_stream()
                             else:
-                                print(f"We could not restablish the stream after {self.attempts} trials.")
+                                print(f"We could not reestablish the stream after {self.attempts} trials.")
                                 raise SystemExit
                         self.attempts = 1
                         repetition_breaker = tweet_details
@@ -456,7 +458,7 @@ class Stream(FeshBuilder):
                             print(tweet_details)
 
                 else:
-                    continue #No tweet was recieved for the tweet_id. Ignore
+                    continue #No tweet was received for the tweet_id. Ignore
             else:
                 response.close()
                 print(f"We received an empty byte data: Stream disconnected.\nStarting exponential back-off.\nSleep started @ {dt.now()}")
